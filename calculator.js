@@ -27,14 +27,24 @@ Calculator.prototype.get = function () {
     followed by any number of numbers (or the period .)
  */
 Calculator.prototype.number = function () {
-  let result;
-	debugger
-  while ((typeof this.peek() === 'number') || (this.peek() === '.')) {
-		console.log('in');
-    result += this.get();
-  }
+  let result = '';
 
-  return result;
+	 var numsArray = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+	while (numsArray.includes(this.peek()) || this.peek() === '.') {
+		console.log('in');
+		result += this.get();
+	}
+
+	return Number(result);
+
+  // while ((this.peek().match(/\d/)) || (this.peek() === '.')) {
+	// 	console.log('in');
+  //   result += this.get();	
+	// 	return result || '';
+  // }
+  //return result;
+
 };
 
 /*
@@ -48,21 +58,25 @@ Calculator.prototype.number = function () {
     - If we see a "-", return the negative of the factor
  */
 Calculator.prototype.factor = function () {
-  let result = this.number(); //result is nothing if the first term of expressionToParse is not a number
+  //let result = this.number(); //result is nothing if the first term of expressionToParse is not a number
 
-  while (this.peek() === '(' || this.peek() === '-')   {
-    if (this.get() === '(') {
-        this.expression();
-    }
+	if(this.peek() === '(') {
+		this.get();
+		let next = this.expression();
+		this.get();
+		return next;
+	} else if(this.peek() === "-") {
+			this.get();
+			let nextFactor = this.factor();
+			return -1 * nextFactor;
 
-    if (this.get() === '-') {
-      result -= (result * 2) //this.get();
-      return result;
-			//this.factor();
-    }
-  }
+	} else if(/\d/.test(this.peek())) {
+			return this.number();
+	} else {
+		//throw
+	}
 
-  return result;
+  //return result;
 };
 
 /*
