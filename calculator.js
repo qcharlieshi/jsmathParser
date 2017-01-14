@@ -6,6 +6,7 @@
 function Calculator(expression) {
   this.expressionToParse = expression.replace(/\s+/g, '').split('');
 };
+//this.expressionToParse = array of tokens
 
 Calculator.prototype.run = function () {
   return this.expression();
@@ -26,7 +27,14 @@ Calculator.prototype.get = function () {
     followed by any number of numbers (or the period .)
  */
 Calculator.prototype.number = function () {
+  let result;
+	debugger
+  while ((typeof this.peek() === 'number') || (this.peek() === '.')) {
+		console.log('in');
+    result += this.get();
+  }
 
+  return result;
 };
 
 /*
@@ -40,14 +48,38 @@ Calculator.prototype.number = function () {
     - If we see a "-", return the negative of the factor
  */
 Calculator.prototype.factor = function () {
+  let result = this.number(); //result is nothing if the first term of expressionToParse is not a number
 
+  while (this.peek() === '(' || this.peek() === '-')   {
+    if (this.get() === '(') {
+        this.expression();
+    }
+
+    if (this.get() === '-') {
+      result -= (result * 2) //this.get();
+      return result;
+			//this.factor();
+    }
+  }
+
+  return result;
 };
 
 /*
   term = factor {(*|/) factor}
  */
 Calculator.prototype.term = function () {
+	let result = this.factor();
 
+	while(this.peek() === '*' || this.peek() === '/') {
+		if(this.get() === '*') {
+			result *= this.factor();
+		} else {
+			result /= this.factor();
+		}
+	}
+
+	return result;
 };
 
 
@@ -65,3 +97,9 @@ Calculator.prototype.expression = function () {
   }
   return result;
 };
+
+
+//var calc = new Calculator("1+2*(3+4)");
+var calc = new Calculator("111");
+console.log(calc.run()) //=> 15
+console.log(calc.number());
